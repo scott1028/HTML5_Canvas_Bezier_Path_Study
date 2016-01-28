@@ -78,6 +78,14 @@
       ctx.stroke()
     })();
 </script>
+<script type="text/javascript">
+    ctx = document.createElement('canvas').getContext('2d');
+    ctx.beginPath();
+    ctx.moveTo(10, 10);
+    ctx.bezierCurveTo(50,100, 150,200, 200,75);
+    ctx.stroke();
+    document.body.appendChild(ctx.canvas);
+</script>
 <div>
     <p>
         1. 左側為原始的版本
@@ -86,6 +94,9 @@
         2. 右側為根據 wiki 上 3階 貝茲曲線公式實作而成！
     </p>
     <img style="margin-left: 40px;" src="bezierFormula.png">
+    <p style="color: red;">
+        3. HTML5 Canvas API
+    </p>
 </div>
 </body>
 </html>
