@@ -1,4 +1,4 @@
-#### 透過 HTML5 Canvas 直接證明三階 Bezier Formula
+#### 透過 HTML5 Canvas 直接證明三階 & N階 Bezier Formula
 
 - 三階公式：![Alt text](https://raw.githubusercontent.com/scott1028/HTML5_Canvas_Bezier_Path_Study/master/bezierFormula.png "Bezier Formula")
 - 降階公式：![Alt text](https://raw.githubusercontent.com/scott1028/HTML5_Canvas_Bezier_Path_Study/master/bezierFormula3.png "Bezier Formula3")
