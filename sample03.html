@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<pre>
+%!PS-Adobe-2.0
+%%Creator: Adobe Photoshop(TM) Pen Path Export 7.0
+%%Title: (sample03.ai)
+%%DocumentNeededResources: procset Adobe_packedarray 2.0 0
+%%+ procset Adobe_IllustratorA_AI3 1.0 1
+%%ColorUsage: Black&White
+%%BoundingBox: 0 0 454 340
+%%HiResBoundingBox: 0 0 454 340
+%AI3_Cropmarks: 0 0 454 340
+%%DocumentPreview: None
+%%EndComments
+%%BeginProlog
+%%IncludeResource: procset Adobe_packedarray 2.0 0
+Adobe_packedarray /initialize get exec
+%%IncludeResource: procset Adobe_IllustratorA_AI3 1.0 1
+%%EndProlog
+%%BeginSetup
+Adobe_IllustratorA_AI3 /initialize get exec
+n
+%%EndSetup
+0.0 0.0 0.0 1.0 k
+0 i 0 J 0 j 1 w 4 M []0 d
+%%Note:
+%Adobe_Photoshop_Path_Begin:<< /defaultFill false >>
+*u
+%AI3_Note:<< /operation /xor /defaultFill false >>
+1 XR
+78.0000 105.0000 m
+77.0000 22.0000 236.0000 -16.0000 243.0000 108.0000 c
+250.0000 232.0000 316.0000 302.0000 319.0000 184.0000 c
+N
+*U
+%Adobe_Photoshop_Path_End
+%%Trailer
+%%EOF
+</pre>
+<div>
+    <p style="color: red;">高階貝茲曲線繪圖 Function Implement By Photoshop 匯出的 AI File！</p>
+</div>
+<script type="text/javascript">
+    var bezier = function(t, p_set){
+      // ref: https://zh.wikipedia.org/wiki/%E8%B2%9D%E8%8C%B2%E6%9B%B2%E7%B7%9A#.E5.BB.BA.E6.A7.8B.E8.B2.9D.E8.8C.B2.E6.9B.B2.E7.B7.9A
+      var bezierPoint = function(t, p_set, field){
+        // 三階貝茲曲線
+        if(p_set.length === 4){
+            var p0 = p_set[0], p1 = p_set[1], p2 = p_set[2], p3 = p_set[3];
+            return p0[field] * Math.pow(1 - t, 3) + 3 * p1[field] * t * Math.pow(1 - t, 2) + 3 * p2[field] * Math.pow(t, 2) * (1 - t) + p3[field] * Math.pow(t, 3);
+        }
+        else{
+            // 降階公式
+            var p_set1 = p_set.slice(0, p_set.length - 1);
+            var p_set2 = p_set.slice(1, p_set.length);
+            return (1 - t) * bezierPoint(t, p_set1, field) + t * bezierPoint(t, p_set2, field);
+        }
+      };
+
+      var x = bezierPoint(t, p_set, 'x');
+      var y = bezierPoint(t, p_set, 'y');
+            
+      return {x: x, y: y};
+    };
+
+    (function(){
+      var accuracy = 0.01, //this'll give the bezier 100 segments
+          p_set = [
+            {x: 78, y: 105}, // p0
+            {x: 77, y: 22},  // p1
+            {x: 236, y: -16}, // p2
+            {x: 243, y: 108}, // p?, etc
+            {x: 250, y: 232},
+            {x: 316, y: 302},
+            {x: 319, y: 184},  // pN
+          ];
+      var ctxNode = document.createElement('canvas');
+      var ctx = ctxNode.getContext('2d');
+
+      ctxNode.width = 1000;
+      ctxNode.height = 1000;
+      document.body.appendChild(ctx.canvas);
+      
+      ctx.moveTo(p_set[0].x, p_set[0].y);
+      for (var i=0; i<1; i+=accuracy){
+         var p = bezier(i, p_set);
+         ctx.lineTo(p.x, p.y);
+      }
+      ctx.stroke()
+    })();
+</script>
+</body>
+</html>
