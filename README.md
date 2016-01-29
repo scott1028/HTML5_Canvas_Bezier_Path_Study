@@ -1,7 +1,7 @@
 #### 透過 HTML5 Canvas 直接證明三階 Bezier Formula
 
-- ![Alt text](https://raw.githubusercontent.com/scott1028/HTML5_Canvas_Bezier_Path_Study/master/bezierFormula.png "Bezier Formula")
-- ![Alt text](https://raw.githubusercontent.com/scott1028/HTML5_Canvas_Bezier_Path_Study/master/bezierFormula3.png "Bezier Formula3")
+- 三階公式：![Alt text](https://raw.githubusercontent.com/scott1028/HTML5_Canvas_Bezier_Path_Study/master/bezierFormula.png "Bezier Formula")
+- 降階公式：![Alt text](https://raw.githubusercontent.com/scott1028/HTML5_Canvas_Bezier_Path_Study/master/bezierFormula3.png "Bezier Formula3")
 - ![Alt text](https://raw.githubusercontent.com/scott1028/HTML5_Canvas_Bezier_Path_Study/master/bezierOutputByPhotoshop.png "Bezier Output By Photoshop")
 - ![Alt text](https://raw.githubusercontent.com/scott1028/HTML5_Canvas_Bezier_Path_Study/master/HowToOutputPhotoshopBezierPathToAiFile.png "Bezier Output AI File")
 - ![Alt text](https://raw.githubusercontent.com/scott1028/HTML5_Canvas_Bezier_Path_Study/master/highLevelBezierCurve1.jpg "Bezier Output AI File")
