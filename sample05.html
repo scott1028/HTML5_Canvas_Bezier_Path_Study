@@ -41,7 +41,7 @@
                 return ctx.moveTo(obj.x, obj.y);
             return ctx.lineTo(obj.x, obj.y);
         });
-        ctx.lineWidth = 3;
+        ctx.lineWidth = .5;
         ctx.strokeStyle = color;
         ctx.stroke();  
     };
@@ -57,10 +57,12 @@
     var scale = 500;
     var gravity = 9.8 * scale;  // 1px = 9.8m
     // var airFriction = 1.2;
-    var mass = 10;
+    var mass = 1.8;
+    var slope = 1.5 // -> (deltaY / delta X)
+    var deltaX = 80;
     var accelerate = {
-        y: 120 * mass,  // 6 * 10
-        x: 80 * mass  // 0.5 * 10
+        y: deltaX * slope * 15/mass,  // 6 * 10
+        x: deltaX * 15/mass  // 0.5 * 10
     };
 
     // util for 畫出拋物線軌跡! t: 相當於 Detla Time 也可以說是 Step
