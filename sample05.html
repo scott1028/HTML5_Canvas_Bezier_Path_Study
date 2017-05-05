@@ -29,7 +29,7 @@
                 return ctx.moveTo(obj.x, obj.y);
             return ctx.lineTo(obj.x, obj.y);
         });
-        ctx.lineWidth = 5;
+        ctx.lineWidth = 10;
         ctx.strokeStyle = color;
         ctx.stroke();  
     };
@@ -42,6 +42,7 @@
     };
 
     var gravity = 9.8;
+    var airFriction = 1.2;
     var mass = 10;
     var accelerate = {
         y: 3 * mass,  // 6 * 10
@@ -54,6 +55,11 @@
             lastPos.x += lastAccelerate.x * t;
             lastPos.y += lastAccelerate.y * t;
             lastAccelerate.y = lastAccelerate.y - gravity * t;
+
+            // air friction
+            lastAccelerate.x = lastAccelerate.x - airFriction * t;
+            if(lastAccelerate.x <= 0) lastAccelerate.x = 0;
+
             totalPath.push({
                 x: lastPos.x,
                 y: canvas.height - lastPos.y
@@ -100,9 +106,9 @@
         };
 
         var $update = function(delta, totalTime){
-            console.debug(delta);
+            console.debug(delta, lastAccelerate);
             if(lastPos.y <= canvas.height)
-                Common.cal(currentPath, lastPos, lastAccelerate, delta / 1000);;
+                Common.cal(currentPath, lastPos, lastAccelerate, delta / 1000);
             drawPath(totalPath);
             drawPath(currentPath, 'red');
         };
