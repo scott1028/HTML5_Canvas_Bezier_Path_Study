@@ -6,12 +6,24 @@
     <!-- <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script> -->
 </head>
 <body>
-    <canvas id="testCanvas" width="600" height="15000"></canvas>
+    <p>
+        <button id="startBtn" onclick="start();">Start</button>
+    </p>
+    <canvas id="testCanvas" width="400" height="300"></canvas>
 <div>
 
 </div>
 
-<script type="text/javascript">
+<script>
+    document.querySelector('#startBtn').disabled = true;
+    drawing = new Image();
+    drawing.src = "icon.png"; // can also be a remote URL e.g. http://
+    drawing.onload = function() {
+        document.querySelector('#startBtn').disabled = false;
+    };
+</script>
+
+<script>
     var canvas = document.querySelector('#testCanvas');
     canvas.style.backgroundColor = 'lightgrey';
     var ctx = canvas.getContext('2d');
@@ -29,24 +41,26 @@
                 return ctx.moveTo(obj.x, obj.y);
             return ctx.lineTo(obj.x, obj.y);
         });
-        ctx.lineWidth = 10;
+        ctx.lineWidth = 3;
         ctx.strokeStyle = color;
         ctx.stroke();  
     };
 
 
     // 拋物線預測實驗
+    var fps = 1 / 60;
     var origin = {
-        x: 50,
-        y: canvas.height - 100
+        x: 20,
+        y: 20
     };
 
-    var gravity = 9.8;
+    var scale = 500;
+    var gravity = 9.8 * scale;  // 1px = 9.8m
     // var airFriction = 1.2;
     var mass = 10;
     var accelerate = {
-        y: 3 * mass,  // 6 * 10
-        x: 2 * mass  // 0.5 * 10
+        y: 120 * mass,  // 6 * 10
+        x: 80 * mass  // 0.5 * 10
     };
 
     // util for 畫出拋物線軌跡! t: 相當於 Detla Time 也可以說是 Step
@@ -92,9 +106,16 @@
         return totalPath;
     };
 
+    var swap = {
+        totalPath: [],
+        currentPath: [],
+        finalPos: null,
+    };
+
+    // game logic
     var update = (function(){
         // finaly( step by 60Hz) 60/60 => 1 Second 來算重力加速
-        var totalPath = calculatePath(1/60, origin, accelerate);
+        var totalPath = calculatePath(fps, origin, accelerate);
 
         // animationPath
         var currentPath = [];
@@ -112,33 +133,47 @@
             console.debug(delta, lastAccelerate.y);
             if(lastPos.y <= canvas.height)
                 Common.cal(currentPath, lastPos, lastAccelerate, delta / 1000);
-            drawPath(totalPath);
-            drawPath(currentPath, 'red');
+            var finalPos = {
+                x: currentPath[currentPath.length - 1].x,
+                y: currentPath[currentPath.length - 1].y
+            };
+            swap.totalPath = totalPath;
+            swap.currentPath = currentPath;
+            swap.finalPos = finalPos;
         };
         return $update;
     })();
 
+    // render
+    var drawView = function(){
+        requestAnimationFrame(drawView);
+        if(swap.finalPos === null)
+            return;
+        drawPath(swap.totalPath);
+        drawPath(swap.currentPath, 'red');
+        ctx.drawImage(drawing, swap.finalPos.x - 25/2, swap.finalPos.y - 25/2, 25, 25);
+    };
+
     var lastTime = window.performance.now();
     var beginTime = lastTime;
     function tick(){
+        setTimeout(tick, fps * 1000);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         var current = window.performance.now();
         var delta = current - lastTime;
         lastTime = current;
         update(delta, current - beginTime);
-        requestAnimationFrame(tick);
+        console.log(current);
     };
-    requestAnimationFrame(tick);
 
-    // avoid delta time too large bug
-    window.addEventListener('focus', function() {
-        document.title = 'focused';
+    var id = null;
+    var start = function(){
         lastTime = window.performance.now();
-    });
-
-    window.addEventListener('blur', function() {
-        document.title = 'not focused';
-    });
+        beginTime = lastTime;
+        setTimeout(tick, fps * 1000);
+        if(id === null)
+            id = requestAnimationFrame(drawView);
+    };
 </script>
 </body>
 </html>
