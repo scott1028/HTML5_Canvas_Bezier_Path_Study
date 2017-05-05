@@ -16,7 +16,11 @@
     canvas.style.backgroundColor = 'lightgrey';
     var ctx = canvas.getContext('2d');
 
-    var drawPath = function(list){
+    var drawPath = function(list, color){
+        if(!color)
+            color = 'blue';
+        else
+            color = 'red';
         ctx.beginPath();
         list.forEach(function(obj, idx, all){
             if(idx === 0 && all.length === 1)
@@ -26,7 +30,7 @@
             return ctx.lineTo(obj.x, obj.y);
         });
         ctx.lineWidth = 5;
-        ctx.strokeStyle = 'blue';
+        ctx.strokeStyle = color;
         ctx.stroke();  
     };
 
@@ -44,7 +48,18 @@
         x: 2 * mass  // 0.5 * 10
     };
 
-    // util for 畫出拋物線軌跡
+    // util for 畫出拋物線軌跡! t: 相當於 Detla Time 也可以說是 Step
+    var Common = {
+        cal: function(totalPath, lastPos, lastAccelerate, t){
+            lastPos.x += lastAccelerate.x * t;
+            lastPos.y += lastAccelerate.y * t;
+            lastAccelerate.y = lastAccelerate.y - gravity * t;
+            totalPath.push({
+                x: lastPos.x,
+                y: canvas.height - lastPos.y
+            });
+        }
+    };
     var calculatePath = function(step, origin, accelerate){
         var totalPath = [];
         var lastPos = {
@@ -57,28 +72,39 @@
         };
 
         var hanlder = function(t){
-            lastPos.x += lastAccelerate.x * t;
-            lastPos.y += lastAccelerate.y * t;
-            lastAccelerate.y = lastAccelerate.y - gravity * t;
-            totalPath.push({
-                x: lastPos.x,
-                y: canvas.height - lastPos.y
-            });
+            Common.cal(totalPath, lastPos, lastAccelerate, t);
+            
         };
 
         // 直到超過場地
         for(var t = 0; lastPos.y > 0; t += step){
-            hanlder(t);
+            hanlder(step);
         };
 
         return totalPath;
     };
 
     var update = (function(){
-        var totalPath = calculatePath(0.01, origin, accelerate);
+        // finaly( step by 60Hz)
+        var totalPath = calculatePath(1/60, origin, accelerate);
+
+        // animationPath
+        var currentPath = [];
+        var lastPos = {
+            x: origin.x,
+            y: origin.y
+        };
+        var lastAccelerate = {
+            x: accelerate.x,
+            y: accelerate.y
+        };
 
         var $update = function(delta, totalTime){
+            console.debug(delta);
+            if(lastPos.y <= canvas.height)
+                Common.cal(currentPath, lastPos, lastAccelerate, delta / 1000);;
             drawPath(totalPath);
+            drawPath(currentPath, 'red');
         };
         return $update;
     })();
