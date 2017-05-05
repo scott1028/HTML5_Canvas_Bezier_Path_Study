@@ -6,7 +6,7 @@
     <!-- <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script> -->
 </head>
 <body>
-    <canvas id="testCanvas" width="400" height="9048"></canvas>
+    <canvas id="testCanvas" width="600" height="15000"></canvas>
 <div>
 
 </div>
@@ -64,6 +64,8 @@
                 x: lastPos.x,
                 y: canvas.height - lastPos.y
             });
+
+            lastAccelerate.gravity += gravity * t;  // 重力加速度 1 second = 9.8 --> 2 second = 19.6, etc
         }
     };
     var calculatePath = function(step, origin, accelerate){
@@ -80,13 +82,11 @@
 
         var hanlder = function(t){
             Common.cal(totalPath, lastPos, lastAccelerate, t);
-            
         };
 
         // 直到超過場地
-        for(var t = 0; lastPos.y > 0; t += step){
+        for(var t = 0; lastPos.y > 0; t += step)
             hanlder(step);
-        };
 
         return totalPath;
     };
