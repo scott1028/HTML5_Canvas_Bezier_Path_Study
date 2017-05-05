@@ -3,7 +3,7 @@
 <head>
     <title>畫出拋物線軌跡</title>
     <script src="https://code.jquery.com/jquery-3.0.0.js"></script>
-    <!-- <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script> -->
+    <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
 </head>
 <body>
     <p>
@@ -178,6 +178,17 @@
         setTimeout(tick, fps * 1000);
         if(id === null)
             id = requestAnimationFrame(drawView);
+    };
+</script>
+<script>
+    // 加上程式執行的延遲的保險 FPS -> 20, 補足每次的 Delta 為 50 空閒時間不做其他事情!
+    // 20 FSP -> 1/20 * 1000 -> 50
+    console.debug('CreateJS FPS->', createjs.Ticker.getFPS());
+    createjs.Ticker.addEventListener("tick", fixedTick);
+    function fixedTick(e){
+        // 從實驗得知不會把 60  FPS 刷滿 會用 40 FPS 讓多餘的時間等待，留給程式執行在加上差額補上下一個 FPS Delta
+        console.debug("TICK!!!", e.delta);
+        // tick();
     };
 </script>
 </body>
