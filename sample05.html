@@ -129,7 +129,7 @@
             gravity: gravity
         };
 
-        var $update = function(delta, totalTime){
+        var $update = function(delta){
             console.debug(delta, lastAccelerate.y);
             if(lastPos.y <= canvas.height)
                 Common.cal(currentPath, lastPos, lastAccelerate, delta / 1000);
@@ -154,28 +154,38 @@
         ctx.drawImage(drawing, swap.finalPos.x - 25/2, swap.finalPos.y - 25/2, 25, 25);
     };
 
-    var lastTime = window.performance.now();
-    var beginTime = lastTime;
+    // var lastTime = window.performance.now();
+    // var beginTime = lastTime;
     function tick(){
-        setTimeout(tick, fps * 1000);
+        var s = window.performance.now();
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        var current = window.performance.now();
-        var delta = current - lastTime;
-        
         // Ref: http://stackoverflow.com/questions/5927284/how-can-i-make-setinterval-also-work-when-a-tab-is-inactive-in-chrome
-        delta = Math.min(delta, fps * 1000);
+        var delta = fps * 1000;
+        update(delta);
 
-        lastTime = current;
-        update(delta, current - beginTime);
-        console.log(current);
+        // test program lag
+        {
+            var s = window.performance.now();
+            var costTime = Math.floor(Math.random() * 13) + 3;
+            while(window.performance.now() < costTime + s){
 
+            }
+        }
+
+        var spent = window.performance.now() - s;
+        
+        // 修正 Delta 配合 Update Loading 太重
+        var nextTrigger = fps * 1000 - spent;
+        nextTrigger = Math.max(nextTrigger, 0);
+        console.error(nextTrigger);
+        setTimeout(tick, nextTrigger);
     };
 
     var id = null;
     var start = function(){
-        lastTime = window.performance.now();
-        beginTime = lastTime;
-        setTimeout(tick, fps * 1000);
+        if(id === null)
+            setTimeout(tick, fps * 1000);
         if(id === null)
             id = requestAnimationFrame(drawView);
     };
@@ -183,12 +193,15 @@
 <script>
     // 加上程式執行的延遲的保險 FPS -> 20, 補足每次的 Delta 為 50 空閒時間不做其他事情!
     // 20 FSP -> 1/20 * 1000 -> 50
+    createjs.Ticker.setFPS(60);
     console.debug('CreateJS FPS->', createjs.Ticker.getFPS());
-    createjs.Ticker.addEventListener("tick", fixedTick);
+    // createjs.Ticker.addEventListener("tick", fixedTick);
     function fixedTick(e){
         // 從實驗得知不會把 60  FPS 刷滿 會用 40 FPS 讓多餘的時間等待，留給程式執行在加上差額補上下一個 FPS Delta
         console.debug("TICK!!!", e.delta);
-        // tick();
+
+        // ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // update(e.delta, 0);
     };
 </script>
 </body>
