@@ -65,7 +65,8 @@
                 y: canvas.height - lastPos.y
             });
 
-            lastAccelerate.gravity += gravity * t;  // 重力加速度 1 second = 9.8 --> 2 second = 19.6, etc
+            // 重力加速度 1 second = 9.8 --> 2 second = 19.6, etc
+            lastAccelerate.gravity += gravity * t;
         }
     };
     var calculatePath = function(step, origin, accelerate){
