@@ -163,7 +163,7 @@
         var delta = current - lastTime;
         
         // Ref: http://stackoverflow.com/questions/5927284/how-can-i-make-setinterval-also-work-when-a-tab-is-inactive-in-chrome
-        delta = Math.min(delta, fps * 1000)
+        delta = Math.min(delta, fps * 1000);
 
         lastTime = current;
         update(delta, current - beginTime);
