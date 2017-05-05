@@ -6,7 +6,7 @@
     <!-- <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script> -->
 </head>
 <body>
-    <canvas id="testCanvas" width="400" height="300"></canvas>
+    <canvas id="testCanvas" width="400" height="9048"></canvas>
 <div>
 
 </div>
@@ -42,7 +42,7 @@
     };
 
     var gravity = 9.8;
-    var airFriction = 1.2;
+    // var airFriction = 1.2;
     var mass = 10;
     var accelerate = {
         y: 3 * mass,  // 6 * 10
@@ -54,11 +54,11 @@
         cal: function(totalPath, lastPos, lastAccelerate, t){
             lastPos.x += lastAccelerate.x * t;
             lastPos.y += lastAccelerate.y * t;
-            lastAccelerate.y = lastAccelerate.y - gravity * t;
+            lastAccelerate.y = lastAccelerate.y - lastAccelerate.gravity * t;
 
             // air friction
-            lastAccelerate.x = lastAccelerate.x - airFriction * t;
-            if(lastAccelerate.x <= 0) lastAccelerate.x = 0;
+            // lastAccelerate.x = lastAccelerate.x - airFriction * t;
+            // if(lastAccelerate.x <= 0) lastAccelerate.x = 0;
 
             totalPath.push({
                 x: lastPos.x,
@@ -74,7 +74,8 @@
         };
         var lastAccelerate = {
             x: accelerate.x,
-            y: accelerate.y
+            y: accelerate.y,
+            gravity: gravity
         };
 
         var hanlder = function(t){
@@ -91,7 +92,7 @@
     };
 
     var update = (function(){
-        // finaly( step by 60Hz)
+        // finaly( step by 60Hz) 60/60 => 1 Second 來算重力加速
         var totalPath = calculatePath(1/60, origin, accelerate);
 
         // animationPath
@@ -102,11 +103,12 @@
         };
         var lastAccelerate = {
             x: accelerate.x,
-            y: accelerate.y
+            y: accelerate.y,
+            gravity: gravity
         };
 
         var $update = function(delta, totalTime){
-            console.debug(delta, lastAccelerate);
+            console.debug(delta, lastAccelerate.y);
             if(lastPos.y <= canvas.height)
                 Common.cal(currentPath, lastPos, lastAccelerate, delta / 1000);
             drawPath(totalPath);
