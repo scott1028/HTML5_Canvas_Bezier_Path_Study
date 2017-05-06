@@ -77,8 +77,11 @@
         y: canvas.height - 10
     };
     var path = [];
-    // fly 20 seconds
-    for(var i = 0; i < 20; i += 0.1){
+    path.push(origin);
+    // 可分別推估出飛行時間與落點位置
+    // >> fly 20 seconds or `fly if y < canvas.height`
+    // >> for(var i = 0; i < 20; i += 0.1){
+    for(var i = 0; path[path.length - 1].y < canvas.height; i += 0.1){
         let y = getYFromOrigin(i, origin.y, startAccelerate, gravity);
         let x = getXFromOrigin(i, origin.x, startAccelerateX);
         let pos = {
