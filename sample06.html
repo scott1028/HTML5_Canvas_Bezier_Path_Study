@@ -9,7 +9,7 @@
     <p>
         <button id="startBtn" onclick="start();">Start</button>
     </p>
-    <canvas id="testCanvas" width="600" height="800"></canvas>
+    <canvas id="testCanvas" width="800" height="300"></canvas>
 <div>
 
 </div>
@@ -64,17 +64,20 @@
     };
 
     var getXFromOrigin = function(n, x, sv){
-        return x + n * sv;
+        return x + n * sv;  // add: "* 0.9 ** n" as friction. 
     };
 </script>
 <script>
-    var aScale = 1;
-    var gravity = 9.8 * aScale;
-    var startAccelerate = -50 * aScale;  // f = ma, a = accelerate
-    var startAccelerateX = 20 * aScale;
+    // Ref: https://social.msdn.microsoft.com/Forums/zh-TW/951f7b68-7582-4954-96f5-fd588e48eb86?forum=232
+    // 96 DPI 時, 1 Inch = 96 Pixels , 1 CM = 1/2.54 Inch = 96/2.54 Pixels = 37.7953 Pixels, 38像素=1公分
+    var aScale = 3.8 * 5;
+    var gravity = 9.8 * aScale;  // 向上拋加速度為 "負數" 向下的重力加速度為正數 9.8 pixel 
+    var startAccelerate = -20 * aScale;  // f = ma, a = accelerate
+    var startAccelerateX = 10 * aScale;
     var origin = {
         x: 10,
-        y: canvas.height - 10
+        y: canvas.height - canvas.height / 4,
+        t: 0
     };
     var path = [];
     path.push(origin);
@@ -82,10 +85,10 @@
     // >> fly 20 seconds or `fly if y < canvas.height`
     // >> for(var i = 0; i < 20; i += 0.1){
     for(var i = 0; path[path.length - 1].y < canvas.height; i += 0.1){
-        let y = getYFromOrigin(i, origin.y, startAccelerate, gravity);
-        let x = getXFromOrigin(i, origin.x, startAccelerateX);
+        let y = getYFromOrigin(i + 0.1, origin.y, startAccelerate, gravity);
+        let x = getXFromOrigin(i + 0.1, origin.x, startAccelerateX);
         let pos = {
-            t: i,
+            t: i + 0.1,
             x: x,
             y: y
         };
@@ -100,13 +103,28 @@
     createjs.Ticker.addEventListener("tick", fixedTick);
     function fixedTick(e){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // debugger;
-        // var idx = parseInt(e.runTime / 100);
-        // if(idx > path.length - 1)
-        //     idx = path.length - 1;
-        // console.debug("TICK!!!", e.delta);
-        // drawPath(path.slice(0, idx));
+        if(enableLogic)
+            updated(e);
         drawPath(path);
+    };
+</script>
+<script>
+    var enableLogic = false;
+    var start = function(){
+        enableLogic = true;
+    };
+</script>
+<script>
+    var startTime = null;
+    var updated = function(e){
+        if(startTime === null)
+            startTime = window.performance.now();
+        var currentTime = window.performance.now() - startTime;
+        var pos = {
+            x: getXFromOrigin(currentTime / 1000, origin.x, startAccelerateX),
+            y: getYFromOrigin(currentTime / 1000, origin.y, startAccelerate, gravity)
+        };
+        ctx.drawImage(drawing, pos.x - 25/2, pos.y - 25/2, 25, 25);
     };
 </script>
 </body>
