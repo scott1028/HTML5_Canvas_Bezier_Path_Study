@@ -7,7 +7,7 @@
 </head>
 <body>
     <p>
-        <button id="startBtn" onclick="start();">Start</button>
+        <button id="startBtn" onclick="shoot();">Shoot</button>
     </p>
     <canvas id="testCanvas" width="800" height="300"></canvas>
 <div>
@@ -110,7 +110,8 @@
 </script>
 <script>
     var enableLogic = false;
-    var start = function(){
+    var shoot = function(){
+        startTime = null;
         enableLogic = true;
     };
 </script>
