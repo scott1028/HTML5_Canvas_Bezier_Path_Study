@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>畫出拋物線軌跡</title>
+    <script src="https://code.jquery.com/jquery-3.0.0.js"></script>
+    <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+</head>
+<body>
+    <p>
+        <button id="startBtn" onclick="start();">Start</button>
+    </p>
+    <canvas id="testCanvas" width="400" height="300"></canvas>
+<div>
+
+</div>
+
+<script>
+    document.querySelector('#startBtn').disabled = true;
+    drawing = new Image();
+    drawing.src = "icon.png"; // can also be a remote URL e.g. http://
+    drawing.onload = function() {
+        document.querySelector('#startBtn').disabled = false;
+    };
+</script>
+
+<script>
+    var canvas = document.querySelector('#testCanvas');
+    canvas.style.backgroundColor = 'lightgrey';
+    var ctx = canvas.getContext('2d');
+
+    var drawPath = function(list, color){
+        if(!color)
+            color = 'blue';
+        else
+            color = 'red';
+        ctx.beginPath();
+        list.forEach(function(obj, idx, all){
+            if(idx === 0 && all.length === 1)
+                return ctx.moveTo(obj.x, obj.y);
+            if(idx === 0)
+                return ctx.moveTo(obj.x, obj.y);
+            return ctx.lineTo(obj.x, obj.y);
+        });
+        ctx.lineWidth = .5;
+        ctx.strokeStyle = color;
+        ctx.stroke();  
+    };
+</script>
+<script>
+    // Ref: http://www.iforce2d.net/b2dtut/projected-trajectory#
+    // h = starting height
+    // v = starting velocity
+    // a = acceleration (gravity, constant)
+    // n = second
+    //
+    // So height after the nth time step is:
+    // h(n) = h + nv + (n² + n)/2 * a
+    var getYFromOrigin = function(n, h, sv, gravity){
+        return h + n * v + (n*n + n) /2 * gravity;
+    };
+
+    var getXFromOrigin = function(n, x, sv){
+        return x + n * sv;
+    };
+</script>
+<script>
+    var fps = 60;
+    createjs.Ticker.setFPS(fps);
+    console.debug('CreateJS FPS->', createjs.Ticker.getFPS());
+    createjs.Ticker.addEventListener("tick", fixedTick);
+    function fixedTick(e){
+        console.debug("TICK!!!", e.delta);
+    };
+</script>
+</body>
+</html>
