@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>畫出拋物線軌跡</title>
+    <title>物件飛行軌跡 By Box2D</title>
     <script src="https://code.jquery.com/jquery-3.0.0.js"></script>
     <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
 </head>
@@ -9,7 +9,7 @@
     <p>
         <button id="startBtn" onclick="start();">Start</button>
     </p>
-    <canvas id="testCanvas" width="400" height="300"></canvas>
+    <canvas id="testCanvas" width="600" height="800"></canvas>
 <div>
 
 </div>
@@ -56,11 +56,38 @@
     // So height after the nth time step is:
     // h(n) = h + nv + (n² + n)/2 * a
     var getYFromOrigin = function(n, h, sv, gravity){
-        return h + n * v + (n*n + n) /2 * gravity;
+        //velocity and gravity are given per second but we want time step values here
+        // var t = 1 / 60.0; // seconds per time step (at 60fps)
+        // sv = t * sv; // m/s
+        // gravity = t * t * gravity; // m/s/s
+        return h + n * sv + (n * n + n) * gravity * 0.5 ;
     };
 
     var getXFromOrigin = function(n, x, sv){
         return x + n * sv;
+    };
+</script>
+<script>
+    var aScale = 1;
+    var gravity = 9.8 * aScale;
+    var startAccelerate = -50 * aScale;  // f = ma, a = accelerate
+    var startAccelerateX = 20 * aScale;
+    var origin = {
+        x: 10,
+        y: canvas.height - 10
+    };
+    var path = [];
+    // fly 20 seconds
+    for(var i = 0; i < 20; i += 0.1){
+        let y = getYFromOrigin(i, origin.y, startAccelerate, gravity);
+        let x = getXFromOrigin(i, origin.x, startAccelerateX);
+        let pos = {
+            t: i,
+            x: x,
+            y: y
+        };
+        path.push(pos);
+        console.log(pos);
     };
 </script>
 <script>
@@ -69,7 +96,14 @@
     console.debug('CreateJS FPS->', createjs.Ticker.getFPS());
     createjs.Ticker.addEventListener("tick", fixedTick);
     function fixedTick(e){
-        console.debug("TICK!!!", e.delta);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // debugger;
+        // var idx = parseInt(e.runTime / 100);
+        // if(idx > path.length - 1)
+        //     idx = path.length - 1;
+        // console.debug("TICK!!!", e.delta);
+        // drawPath(path.slice(0, idx));
+        drawPath(path);
     };
 </script>
 </body>
