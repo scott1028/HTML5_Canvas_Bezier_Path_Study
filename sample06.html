@@ -9,6 +9,11 @@
     <p>
         <button id="startBtn" onclick="shoot();">Shoot</button>
     </p>
+    <div>
+        <label>Speed(deltaY/deltaTime): </label>
+        <span class="speed-value">0</span>
+        <span>Pixel</span>
+    </div>
     <canvas id="testCanvas" width="800" height="300"></canvas>
 <div>
 
@@ -116,6 +121,7 @@
     };
 </script>
 <script>
+    var lastPos = origin;
     var startTime = null;
     var updated = function(e){
         if(startTime === null)
@@ -125,6 +131,10 @@
             x: getXFromOrigin(currentTime / 1000, origin.x, startAccelerateX),
             y: getYFromOrigin(currentTime / 1000, origin.y, startAccelerate, gravity)
         };
+        // calculate speed
+        var speedValue = (pos.y - lastPos.y) / e.delta;
+        document.querySelector('.speed-value').innerText = speedValue;
+        lastPos = pos;
         ctx.drawImage(drawing, pos.x - 25/2, pos.y - 25/2, 25, 25);
     };
 </script>
