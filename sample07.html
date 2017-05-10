@@ -19,7 +19,7 @@
         <label>Y4:<input class="dot" line="l2.p2.y" type="number" name="y4" value="10" /></label>
     </div>
     <script>
-        $('.dot').on('keyup', function(e){
+        $('.dot').on('keyup input change', function(e){
             var $path = e.target.getAttribute('line').match(/^(?:(.*))\./g)[0]; path = $path.slice(0, $path.length - 1);
             var field = e.target.getAttribute('line').slice($path.length, $path.length + 1);
             (eval(path))[field] = parseFloat(e.target.value);
