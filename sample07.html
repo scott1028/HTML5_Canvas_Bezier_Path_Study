@@ -6,6 +6,26 @@
     <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
 </head>
 <body>
+    <div>
+        <label>X1:<input class="dot" line="l1.p1.x" type="number" name="x1" value="70" /></label>
+        <label>Y1:<input class="dot" line="l1.p1.y" type="number" name="y1" value="30" /></label>
+        <label>X2:<input class="dot" line="l1.p2.x" type="number" name="x2" value="80" /></label>
+        <label>Y2:<input class="dot" line="l1.p2.y" type="number" name="y2" value="150" /></label>
+    </div>
+    <div>
+        <label>X3:<input class="dot" line="l2.p1.x" type="number" name="x3" value="100" /></label>
+        <label>Y3:<input class="dot" line="l2.p1.y" type="number" name="y3" value="120" /></label>
+        <label>X4:<input class="dot" line="l2.p2.x" type="number" name="x4" value="8" /></label>
+        <label>Y4:<input class="dot" line="l2.p2.y" type="number" name="y4" value="10" /></label>
+    </div>
+    <script>
+        $('.dot').on('keyup', function(e){
+            var $path = e.target.getAttribute('line').match(/^(?:(.*))\./g)[0]; path = $path.slice(0, $path.length - 1);
+            var field = e.target.getAttribute('line').slice($path.length, $path.length + 1);
+            (eval(path))[field] = parseFloat(e.target.value);
+        });
+    </script>
+    <br />
     <canvas id="testCanvas" width="600" height="400" style="background-color: lightgrey;"></canvas>
     <script>
         var l1 = {
@@ -77,12 +97,13 @@
         console.debug('CreateJS FPS->', createjs.Ticker.getFPS());
         createjs.Ticker.addEventListener("tick", fixedTick);
         function fixedTick(e){
+            stage.removeAllChildren();
             drawLine(stage, l1);
             drawLine(stage, l2);
             var dot = getXPoint(l1, l2);
             dot.color = 'blue';
             drawDot(stage, dot);
-            stage.update();
+            stage.update(e);
         };
     </script>
     <img src="sample07.png">
