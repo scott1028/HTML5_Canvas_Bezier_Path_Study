@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>物件飛行軌跡 By Box2D</title>
+    <script src="https://code.jquery.com/jquery-3.0.0.js"></script>
+    <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+</head>
+<body>
+    <canvas id="testCanvas" width="600" height="400" style="background-color: lightgrey;"></canvas>
+    <script>
+        var l1 = {
+            color: "DeepSkyBlue",
+            p1: {x: 70, y: 30},
+            p2: {x: 80, y: 150},
+        };
+
+        var l2 = {
+            color: "red",
+            p1: {x: 100, y: 120},
+            p2: {x: 8, y: 10},
+        };
+    </script>
+    <script>
+        var drawLine = function(stage, line){
+            stage.addChild(new createjs.Shape()).graphics.beginFill(line.color).drawCircle(line.p1.x, line.p1.y, 3);
+            stage.addChild(new createjs.Shape()).graphics.beginFill(line.color).drawCircle(line.p2.x, line.p2.y, 3);
+            stage.addChild(new createjs.Shape()).graphics.setStrokeStyle(1).beginStroke(line.color).moveTo(line.p1.x, line.p1.y).lineTo(line.p2.x, line.p2.y).endStroke();
+        };
+
+        var drawDot = function(stage, point){
+            stage.addChild(new createjs.Shape()).graphics.beginFill(point.color).drawCircle(point.x, point.y, 3);
+        };
+
+        var getM = function(line){
+            return (line.p1.y - line.p2.y) / (line.p1.x - line.p2.x);
+        };
+
+        var getB = function(line){
+            // y = mx + b
+            return line.p1.y - getM(line) * line.p1.x;
+        };
+
+        var $getXPoint = function(m1, b1, m2, b2){
+            // y = mx + b
+            var x = -1 * (b1 - b2) / (m1 - m2)
+            var y = m1 * x + b1
+            return {
+                x: x,
+                y: y
+            };
+        };
+
+        var getXPoint = function(l1, l2){
+            var m1 = getM(l1);
+            var m2 = getM(l2);
+            var b1 = getB(l1);
+            var b2 = getB(l2);
+            // 平行
+            if((m1 - m2) === 0 && ((b1 - b2) === 0))
+                return {
+                    x: null,
+                    y: null
+                };
+            // 重疊
+            if((m1 - m2) === 0)
+                return {
+                    x: Infinity,
+                    y: Infinity
+                };
+            return $getXPoint(m1, b1, m2, b2);
+        };
+    </script>
+    <script>
+        var stage = new createjs.Stage("testCanvas");
+        var fps = 45;
+        createjs.Ticker.setFPS(fps);
+        console.debug('CreateJS FPS->', createjs.Ticker.getFPS());
+        createjs.Ticker.addEventListener("tick", fixedTick);
+        function fixedTick(e){
+            drawLine(stage, l1);
+            drawLine(stage, l2);
+            var dot = getXPoint(l1, l2);
+            dot.color = 'blue';
+            drawDot(stage, dot);
+            stage.update();
+        };
+    </script>
+    <img src="sample07.png">
+</body>
+</html>
